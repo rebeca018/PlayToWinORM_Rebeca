@@ -11,6 +11,7 @@ app.use(
         extended: true,
     })
 );
+app.use(express.json());
 
 app.get("/usuarios/novo", (req,res) => {
     res.sendFile(`${__dirname}/views/formUsuario.html`)
@@ -20,7 +21,7 @@ app.post("./usuarios/novo", async (req, res) => {
     const nickname = req.body.nickname;
     const nome = req.body.nome;
 
-    const dadosUsuario ={
+    const dadosUsuario = {
         nickname,
         nome,
     };
@@ -30,13 +31,15 @@ app.post("./usuarios/novo", async (req, res) => {
     res.send("Usuario inserido sob o id " + usuario.id);
 })
 
-app.listen(8000);                                                                                                                                     
+app.listen(8000, () =>{
+    console.log("Server rodando na porta 8000!");
+});                                                                                                                                     
 
 conn
     .sync()
     .then(() => {
-        console.log("Conectado e sincronizado ao banco de dados com sucesso");
+        console.log("Banco de dados conectado e estrutura sincronizada!");
     })
     .catch((err) => {
-        console.log("Ocorreu um erro: " + err)
+        console.log("Erro ao conectar/sincronizar o banco de dados: " + err);
     });
