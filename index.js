@@ -19,8 +19,8 @@ app.use(
 );
 app.use(express.json());
 
-app.get("/usuarios/novo", (req,res) => {
-    res.sendFile(`${__dirname}/views/formUsuario.html`)
+app.get("/usuarios/novo", (req, res) => {
+    res.render("formUsuario")
 });
      
 app.post("./usuarios/novo", async (req, res) => {
