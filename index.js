@@ -1,10 +1,16 @@
+// Importações de módulos:
 require("dotenv").config();
 const conn = require("./db/conn");
-
 const Usuario = require("./models/Usuario");
-
 const express = require("express");
+const exphbs = require("express-handlebars");
+
+// Instanciação do servidor:
 const app = express();
+
+// Vinculação do Handlebars ao Express:
+app.engine("handlebars", exphbs.engine())
+app.set("view engine", "handlebars");
 
 app.use(
     express.urlencoded({
