@@ -48,9 +48,11 @@ app.post("/usuarios/novo", async (req, res) => {
     res.send("Usuario inserido sob o id " + usuario.id);
 })
 
-app.get("/usuarios/:id/update", (req, res) => {
+app.get("/usuarios/:id/update", async (req, res) => {
     const id = parseInt(req.params.id);
-    const usuario = Usuario.findByPk(id, {raw: true});
+    const usuario = await Usuario.findByPk(id, {raw: true});
+
+    res.render("formUsuario", {usuario});   
     //const usuario = Usuario.findOne({
     //  where: {id: id},
     //  raw: true,
