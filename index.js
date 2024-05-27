@@ -48,6 +48,15 @@ app.post("/usuarios/novo", async (req, res) => {
     res.send("Usuario inserido sob o id " + usuario.id);
 })
 
+app.get("/usuarios/:id/update", (req, res) => {
+    const id = parseInt(req.params.id);
+    const usuario = Usuario.findByPk(id, {raw: true});
+    //const usuario = Usuario.findOne({
+    //  where: {id: id},
+    //  raw: true,
+    //})
+})
+
 app.listen(8000, () =>{
     console.log("Server rodando na porta 8000!");
 });                                                                                                                                     
