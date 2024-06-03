@@ -69,11 +69,22 @@ app.post("/usuarios/:id/update", async (req, res) => {
     const retorno = await Usuario.update(dadosUsuario, {where: {id: id}})
 
     if(retorno > 0){
-        res.redirect("/usuarios")
+        res.redirect("/usuarios");
     }else{
-        res.send("Erro ao atualizar usuário")
+        res.send("Erro ao atualizar usuário");
     }
 })
+
+app.post("/usuarios/:id/delete", async (req, res)=>{
+    const id = parseInt(req.params.id);
+    const retorno = await Usuario.destroy({where: {id: id}});
+
+    if(retorno > 0){
+        res.redirect("/usuarios");
+    }else{
+        res.send("Erro ao excluir usuário");
+    }
+});
 
 app.listen(8000, () =>{
     console.log("Server rodando na porta 8000!");
