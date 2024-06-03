@@ -2,6 +2,7 @@
 require("dotenv").config();
 const conn = require("./db/conn");
 const Usuario = require("./models/Usuario");
+const Jogo = require("./models/Jogo");
 const express = require("express");
 const exphbs = require("express-handlebars");
 
@@ -85,6 +86,69 @@ app.post("/usuarios/:id/delete", async (req, res)=>{
         res.send("Erro ao excluir usuário");
     }
 });
+
+app.get("/jogos", async (req, res) => {
+    const jogos = await Jogo.findAll({raw: true});
+
+    res.render("jogos", {jogos});
+});
+
+app.get("/jogos/novo", (req, res) => {
+    res.render("formJogos");
+});
+     
+app.post("/jogos/novo", async (req, res) => {
+    const titulo = req.body.titulo;
+    const descricao = req.body.descricao;
+    const preco = req.body.preco;
+
+    const dadosJogo = {
+        titulo,
+        descricao,
+        preco,
+    };
+
+    const jogo = await Jogo.create(dadosJogo);
+
+    res.send("Jogo inserido sob o id " + jogo.id);
+})
+
+app.get("/jogos/:id/update", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const jogo = await Jogo.findByPk(id, {raw: true});
+
+    res.render("formJogos", {jogo});   
+
+})
+
+app.post("/jogos/:id/update", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const dadosJogo = {
+        titulo: req.body.titulo,
+        descricao: req.body.descricao,
+        preco: req.body.preco,
+    };
+
+    const retorno = await Jogo.update(dadosJogo, {where: {id: id}})
+
+    if(retorno > 0){
+        res.redirect("/jogos");
+    }else{
+        res.send("Erro ao atualizar jogo");
+    }
+})
+
+app.post("/jogos/:id/delete", async (req, res)=>{
+    const id = parseInt(req.params.id);
+    const retorno = await Jogo.destroy({where: {id: id}});
+
+    if(retorno > 0){
+        res.redirect("/jogos");
+    }else{
+        res.send("Erro ao excluir jogo");
+    }
+});
+
 
 app.listen(8000, () =>{
     console.log("Server rodando na porta 8000!");
