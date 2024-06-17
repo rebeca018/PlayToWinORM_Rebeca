@@ -1,10 +1,12 @@
 // Importações de módulos:
 require("dotenv").config();
 const conn = require("./db/conn");
-const Usuario = require("./models/Usuario");
-const Jogo = require("./models/Jogo");
 const express = require("express");
 const exphbs = require("express-handlebars");
+
+const Usuario = require("./models/Usuario");
+const Jogo = require("./models/Jogo");
+const Cartao = require("./models/Cartao");
 
 // Instanciação do servidor:
 const app = express();
@@ -149,6 +151,41 @@ app.post("/jogos/:id/delete", async (req, res)=>{
     }
 });
 
+// Rotas para cartões
+
+app.get("/usuarios/:id/cartoes", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const usuario = await Usuario.findByPk(id, {raw: true});
+
+    const cartoes = await Cartao.findAll({
+        raw: true,
+        where: {UsuarioId: id},
+    })
+    res.render("cartoes.handlebars", { usuario, cartoes })
+});
+
+// Formulário de cadastro
+app.get("/usuarios/:id/novoCartao", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const usuario = await Usuario.findByPk(id, {raw: true});
+
+    res.render("formCartao", { usuario })
+});
+
+app.post("/usuarios/:id/novoCartao", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    const dadosCartao = {
+        numero: req.body.numero,
+        nome: req.body.nome,
+        codSeguranca: req.body.codSeguranca,
+        UsuarioId: id,
+    };
+
+   await Cartao.create(dadosCartao)
+
+   res.redirect(`/usuarios/:id/cartoes`)
+});
 
 app.listen(8000, () =>{
     console.log("Server rodando na porta 8000!");
