@@ -8,6 +8,9 @@ const Usuario = require("./models/Usuario");
 const Jogo = require("./models/Jogo");
 const Cartao = require("./models/Cartao");
 
+Jogo.belongsToMany(Usuario, {through: "aquisicoes"});
+Usuario.belongsToMany(Jogo, {through: "aquisicoes"});
+
 // Instanciação do servidor:
 const app = express();
 
