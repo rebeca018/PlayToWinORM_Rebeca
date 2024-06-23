@@ -7,6 +7,7 @@ const exphbs = require("express-handlebars");
 const Usuario = require("./models/Usuario");
 const Jogo = require("./models/Jogo");
 const Cartao = require("./models/Cartao");
+const Conquista = require("./models/Conquista");
 
 Jogo.belongsToMany(Usuario, {through: "aquisicoes"});
 Usuario.belongsToMany(Jogo, {through: "aquisicoes"});
@@ -189,6 +190,42 @@ app.post("/usuarios/:id/novoCartao", async (req, res) => {
 
    res.redirect(`/usuarios/:id/cartoes`)
 });
+
+// Rotas conquista
+
+app.get("/jogos/:id/novaConquista", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const jogo = await Jogo.findByPk(id, {raw: true});
+
+    res.render("formConquista", { jogo })
+});
+
+app.post("/jogos/:id/novaConquista", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    const dadosConquista = {
+        titulo: req.body.titulo,
+        descricao: req.body.descricao,
+        idConquista: id,
+    };
+
+   await Conquista.create(dadosConquista)
+
+   res.redirect(`/jogos/:id/conquistas`)
+});
+
+
+app.get("/jogos/:id/conquistas", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const jogo = await Jogo.findByPk(id, {raw: true});
+
+    const conquistas = await Conquista.findAll({
+        raw: true,
+        where: {idConquista: id},
+    })
+    res.render("conquistas.handlebars", { jogo, conquistas })
+});
+
 
 app.listen(8000, () =>{
     console.log("Server rodando na porta 8000!");
