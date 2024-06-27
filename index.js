@@ -53,7 +53,7 @@ app.post("/usuarios/novo", async (req, res) => {
     const usuario = await Usuario.create(dadosUsuario);
 
     res.send("Usuario inserido sob o id " + usuario.id);
-})
+});
 
 app.get("/usuarios/:id/update", async (req, res) => {
     const id = parseInt(req.params.id);
@@ -64,7 +64,7 @@ app.get("/usuarios/:id/update", async (req, res) => {
     //  where: {id: id},
     //  raw: true,
     //})
-})
+});
 
 app.post("/usuarios/:id/update", async (req, res) => {
     const id = parseInt(req.params.id);
@@ -80,7 +80,7 @@ app.post("/usuarios/:id/update", async (req, res) => {
     }else{
         res.send("Erro ao atualizar usuário");
     }
-})
+});
 
 app.post("/usuarios/:id/delete", async (req, res)=>{
     const id = parseInt(req.params.id);
@@ -116,8 +116,8 @@ app.post("/jogos/novo", async (req, res) => {
 
     const jogo = await Jogo.create(dadosJogo);
 
-    res.send("Jogo inserido sob o id " + jogo.id);
-})
+    res.redirect("/jogos")
+});
 
 app.get("/jogos/:id/update", async (req, res) => {
     const id = parseInt(req.params.id);
@@ -125,7 +125,7 @@ app.get("/jogos/:id/update", async (req, res) => {
 
     res.render("formJogos", {jogo});   
 
-})
+});
 
 app.post("/jogos/:id/update", async (req, res) => {
     const id = parseInt(req.params.id);
@@ -142,7 +142,7 @@ app.post("/jogos/:id/update", async (req, res) => {
     }else{
         res.send("Erro ao atualizar jogo");
     }
-})
+});
 
 app.post("/jogos/:id/delete", async (req, res)=>{
     const id = parseInt(req.params.id);
@@ -156,7 +156,7 @@ app.post("/jogos/:id/delete", async (req, res)=>{
 });
 
 // Rotas para cartões
-
+// buscando cartão
 app.get("/usuarios/:id/cartoes", async (req, res) => {
     const id = parseInt(req.params.id);
     const usuario = await Usuario.findByPk(id, {raw: true});
@@ -176,6 +176,7 @@ app.get("/usuarios/:id/novoCartao", async (req, res) => {
     res.render("formCartao", { usuario })
 });
 
+// criando cartão
 app.post("/usuarios/:id/novoCartao", async (req, res) => {
     const id = parseInt(req.params.id);
 
@@ -187,12 +188,12 @@ app.post("/usuarios/:id/novoCartao", async (req, res) => {
     };
 
    await Cartao.create(dadosCartao)
-
-   res.redirect(`/usuarios/:id/cartoes`)
+   res.redirect(`/usuarios/${id}/cartoes`)
 });
 
 // Rotas conquista
 
+//formulário de cadastro
 app.get("/jogos/:id/novaConquista", async (req, res) => {
     const id = parseInt(req.params.id);
     const jogo = await Jogo.findByPk(id, {raw: true});
@@ -200,28 +201,28 @@ app.get("/jogos/:id/novaConquista", async (req, res) => {
     res.render("formConquista", { jogo })
 });
 
+//cadastrando conquista por jogo
 app.post("/jogos/:id/novaConquista", async (req, res) => {
     const id = parseInt(req.params.id);
 
     const dadosConquista = {
         titulo: req.body.titulo,
         descricao: req.body.descricao,
-        idConquista: id,
+        JogoId: id,
     };
 
    await Conquista.create(dadosConquista)
-
-   res.redirect(`/jogos/:id/conquistas`)
+   res.redirect(`/jogos/${id}/conquistas`)
 });
 
-
+// mostrando as conquistas por jogo
 app.get("/jogos/:id/conquistas", async (req, res) => {
     const id = parseInt(req.params.id);
     const jogo = await Jogo.findByPk(id, {raw: true});
 
     const conquistas = await Conquista.findAll({
         raw: true,
-        where: {idConquista: id},
+        where: {JogoId: id},
     })
     res.render("conquistas.handlebars", { jogo, conquistas })
 });
